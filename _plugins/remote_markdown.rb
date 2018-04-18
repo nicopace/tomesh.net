@@ -3,6 +3,8 @@
 # notice you can do whatever you want with this stuff. If we meet some day, and
 # you think this stuff is worth it, you can buy me a beer in return.
 # Robin Hahling
+#
+# Modified by benedict.lau@groundupworks.com
 
 require 'net/http'
 
@@ -21,7 +23,8 @@ module Jekyll
       res = Net::HTTP.get_response(uri)
       fail 'resource unavailable' unless res.is_a?(Net::HTTPSuccess)
 
-      @content = res.body.force_encoding("UTF-8")
+      # Modified to substitute out relative references in markdown file
+      @content = res.body.force_encoding("UTF-8").gsub! './', "#{uri.scheme}://#{uri.host}#{File.dirname(uri.path)}/"
     end
 
     def render(_context)
